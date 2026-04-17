@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Restaurante PRO Roles</title>
+  <style>
+    :root{
+      --bg:#07101c;
+      --bg2:#0b1423;
+      --panel:#111b2f;
+      --panel2:#16233a;
+      --card:#0f1728;
+      --line:#22324b;
+      --line2:#2c4468;
+      --text:#e8eef8;
+      --muted:#9bb0ce;
+      --primary:#22c55e;
+      --primary2:#16a34a;
+      --secondary:#0ea5e9;
+      --warning:#f59e0b;
+      --danger:#ef4444;
+      --success:#22c55e;
+      --radius:18px;
+      --shadow:0 14px 40px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+    body{min-height:100vh}
+    button,input,select,textarea{font:inherit}
+    img{max-width:100%}
+    a{color:inherit}
+
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+    .sidebar{
+      position:sticky;top:0;height:100vh;overflow:auto;
+      background:rgba(9,15,27,.95);border-right:1px solid var(--line);padding:18px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:6px 4px 16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+    .brand-logo{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;overflow:hidden;box-shadow:var(--shadow)}
+    .brand-logo img{width:100%;height:100%;object-fit:cover}
+    .brand h1{font-size:18px;margin:0}
+    .brand small{color:var(--muted)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav button{
+      width:100%;border:none;background:transparent;color:var(--text);padding:12px 14px;border-radius:14px;cursor:pointer;text-align:left;
+      display:flex;align-items:center;justify-content:space-between;border:1px solid transparent;transition:.2s
+    }
+    .nav button:hover{background:#10192d;border-color:#1b2a42}
+    .nav button.active{background:linear-gradient(135deg,rgba(34,197,94,.17),rgba(14,165,233,.15));border-color:#294d40}
+    .nav small{color:var(--muted)}
+    .sidebar-foot{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+
+    .main{padding:18px;display:flex;flex-direction:column;gap:18px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      background:rgba(17,27,47,.78);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow)
+    }
+    .topbar .title h2{margin:0 0 4px;font-size:24px}
+    .topbar .title small{color:var(--muted)}
+    .top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .user-chip,.pill-info,.badge{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#0c1527;border:1px solid var(--line);font-size:13px
+    }
+    .badge.success{color:#90f7b1}.badge.warning{color:#f8d17a}.badge.info{color:#8edbff}.badge.danger{color:#f8a0a0}
+    .btn{
+      border:none;background:#1c2942;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;transition:.2s
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+    .btn.info{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff}
+    .btn.warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+    .btn.danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+    .btn.ghost{background:transparent;border:1px solid var(--line)}
+    .btn.sm{padding:8px 10px;font-size:13px}
+    .btn.block{width:100%}
+
+    .tabs{display:none}
+    .tabs.active{display:block}
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .card{background:linear-gradient(180deg,rgba(17,27,47,.94),rgba(12,20,37,.96));border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+    .metric .label{color:var(--muted);font-size:13px}
+    .metric .value{font-size:30px;font-weight:800;margin-top:10px}
+    .metric .hint{font-size:12px;color:var(--muted);margin-top:8px}
+
+    .grid-2{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .kpi-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .mini{background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .mini span{color:var(--muted);font-size:13px;display:block}
+    .mini b{font-size:22px;display:block;margin-top:6px}
+
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+    .section-title h3{margin:0;font-size:18px}
+    .section-title small{color:var(--muted)}
+    .toolbar,.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .field{display:flex;flex-direction:column;gap:6px}
+    .label{font-size:13px;color:var(--muted)}
+    .input,.select,.textarea{
+      width:100%;background:#0b1528;border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:12px;outline:none
+    }
+    .textarea{min-height:90px;resize:vertical}
+    .input:focus,.select:focus,.textarea:focus{border-color:#2f7a58;box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+    .inline>.field,.inline>.input,.inline>.select,.inline>div{flex:1 1 160px}
+    .helper{font-size:12px;color:var(--muted)}
+
+    .pos-layout{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+    .menu-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .category-pills{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-bottom:14px}
+    .pill{white-space:nowrap;border-radius:999px;padding:9px 12px;background:#0b1528;border:1px solid var(--line);color:var(--text);cursor:pointer}
+    .pill.active{background:linear-gradient(135deg,rgba(34,197,94,.18),rgba(14,165,233,.13));border-color:#2d6049}
+    .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-height:calc(100vh - 330px);overflow:auto;padding-right:4px}
+    .product-card{background:#0b1528;border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:.2s}
+    .product-card:hover{transform:translateY(-2px);border-color:#315a48}
+    .product-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .product-name{font-weight:700}
+    .muted{color:var(--muted)}
+    .price{font-weight:800;color:#9df2b9}
+
+    .cart-panel{display:flex;flex-direction:column;gap:14px;position:sticky;top:18px;max-height:calc(100vh - 36px)}
+    .cart-items{display:flex;flex-direction:column;gap:10px;max-height:350px;overflow:auto;padding-right:4px}
+    .cart-item{background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px}
+    .cart-row,.sum-line{display:flex;justify-content:space-between;gap:8px;align-items:center}
+    .qty-box{display:flex;align-items:center;gap:6px}
+    .qty-btn{width:30px;height:30px;border:none;border-radius:9px;background:#1b2942;color:white;cursor:pointer}
+    .summary{display:flex;flex-direction:column;gap:8px;background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .sum-line.total{font-size:20px;font-weight:800;padding-top:8px;border-top:1px dashed #37506f}
+
+    .table-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+    .table-card{background:#0b1528;border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:.2s}
+    .table-card:hover{transform:translateY(-2px)}
+    .table-card.free{border-color:#2b4e3e}
+    .table-card.occupied{border-color:#694332}
+    .table-card.selected{outline:2px solid var(--success)}
+    .table-number{font-size:24px;font-weight:800}
+
+    .order-list{display:flex;flex-direction:column;gap:12px}
+    .order-card{background:#0b1528;border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:12px}
+    .order-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+    .order-items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .order-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .highlight-ready{box-shadow:0 0 0 2px rgba(34,197,94,.25) inset}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #1b2c46;text-align:left;font-size:14px;vertical-align:top}
+    th{position:sticky;top:0;background:#0b1528;color:#d8e4f6}
+    .table-wrap{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:14px}
+    .empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed #35506f;border-radius:16px;background:#0b1528}
+    .perm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .perm-item{background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;align-items:center;gap:8px}
+    .switch{display:flex;align-items:center;gap:8px}
+    .switch input{transform:scale(1.15)}
+
+    .drawer,.modal,.login-screen{
+      position:fixed;inset:0;background:rgba(3,8,18,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:60
+    }
+    .drawer.open,.modal.open,.login-screen.open{display:flex}
+    .modal-box,.drawer-box,.login-box{
+      width:min(980px,100%);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#101a2f,#0d1628);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)
+    }
+    .drawer-box{width:min(560px,100%);margin-left:auto}
+    .modal-header,.modal-footer,.drawer-head{padding:14px 16px;border-bottom:1px solid var(--line)}
+    .modal-footer{border-top:1px solid var(--line);border-bottom:none;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+    .modal-body,.drawer-body{padding:16px}
+
+    .login-screen{display:flex;background:radial-gradient(circle at top,rgba(14,165,233,.18),transparent 30%), linear-gradient(180deg,#060d18,#0a1422)}
+    .login-box{width:min(420px,100%)}
+    .login-head{padding:24px 24px 8px;text-align:center}
+    .login-body{padding:16px 24px 24px}
+    .login-demo{margin-top:14px;padding:14px;border:1px dashed #33506e;border-radius:16px;background:#0b1528;font-size:13px;color:var(--muted)}
+
+    .notify-list{display:flex;flex-direction:column;gap:10px}
+    .notify-card{background:#0b1528;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .notify-card.unread{border-color:#2f7a58}
+
+    .mobile-nav{display:none;position:sticky;bottom:0;z-index:50;background:rgba(9,15,27,.96);border-top:1px solid var(--line);padding:10px;gap:8px;grid-template-columns:repeat(5,1fr)}
+    .mobile-nav button{border:none;background:#0f192d;color:var(--text);padding:10px;border-radius:12px;font-size:12px;cursor:pointer}
+    .mobile-nav button.active{background:linear-gradient(135deg,rgba(34,197,94,.25),rgba(14,165,233,.18));border:1px solid #2d6049}
+
+    .receipt{display:none}
+
+    @media (max-width:1280px){
+      .cards{grid-template-columns:repeat(2,1fr)}
+      .pos-layout,.grid-2{grid-template-columns:1fr}
+      .product-grid{max-height:none}
+      .cart-panel{position:static;max-height:none}
+      .table-grid{grid-template-columns:repeat(4,1fr)}
+      .perm-grid{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (max-width:920px){
+      .app{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .mobile-nav{display:grid}
+      .main{padding:12px;padding-bottom:84px}
+      .cards,.grid-3,.grid-4,.kpi-mini{grid-template-columns:1fr}
+      .product-grid{grid-template-columns:repeat(2,1fr)}
+      .table-grid{grid-template-columns:repeat(3,1fr)}
+      .perm-grid{grid-template-columns:repeat(2,1fr)}
+      .order-items{grid-template-columns:1fr}
+      .topbar .title h2{font-size:20px}
+    }
+    @media (max-width:640px){
+      .product-grid,.table-grid{grid-template-columns:1fr}
+      .top-actions{width:100%}
+      .top-actions > *{flex:1 1 auto}
+      .perm-grid{grid-template-columns:1fr}
+      .login-head{padding:20px 20px 8px}
+      .login-body{padding:16px 20px 20px}
+    }
+    @media print{
+      body *{visibility:hidden}
+      .receipt,.receipt *{visibility:visible}
+      .receipt{display:block;position:absolute;inset:0;background:#fff;color:#000;padding:20px}
+      .receipt table{width:100%;border-collapse:collapse}
+      .receipt th,.receipt td{border-bottom:1px solid #ddd;padding:6px;font-size:12px;color:#000}
+      .receipt .r-center{text-align:center}
+    }
+  </style>
+<script type="text/javascript" nonce="f0a3aa710e414e6b8fa0ef7d5b1" src="//local.adguard.org?ts=1776373499140&amp;type=content-script&amp;dmn=chatgpt.com&amp;app=chrome.exe&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;sbe=0"></script>
+<script type="text/javascript" nonce="f0a3aa710e414e6b8fa0ef7d5b1" src="//local.adguard.org?ts=1776373499140&amp;name=AdGuard%20Popup%20Blocker&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+<body>
+  <div class="login-screen open" id="loginScreen">
+    <div class="login-box">
+      <div class="login-head">
+        <div class="brand-logo" style="margin:0 auto 12px" id="loginLogo">🍽️</div>
+        <h1 style="margin:0">Restaurante PRO</h1>
+        <div class="muted" style="margin-top:6px">Acceso por usuarios, permisos y flujo cocina → mesero</div>
+      </div>
+      <div class="login-body">
+        <div class="field"><label class="label">Usuario</label><input class="input" id="loginUsername" placeholder="admin" autocomplete="username" /></div>
+        <div class="field" style="margin-top:12px"><label class="label">Contraseña</label><input class="input" id="loginPassword" type="password" placeholder="••••••" autocomplete="current-password" /></div>
+        <div class="field" style="margin-top:12px"><button class="btn primary block" id="btnLogin">Ingresar</button></div>
+        <div id="loginError" class="helper" style="color:#fca5a5;margin-top:10px;display:none"></div>
+        <div class="login-demo">
+          <b>Usuarios demo</b><br>
+          Administrador: <b>admin</b> / <b>admin123</b><br>
+          Mesero: <b>mesero1</b> / <b>1234</b><br>
+          Cocina: <b>cocina</b> / <b>1234</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo" id="brandLogo">🍽️</div>
+        <div>
+          <h1 id="brandNameSide">Restaurante PRO</h1>
+          <small id="brandMetaSide">Control restaurante</small>
+        </div>
+      </div>
+      <div class="nav" id="navTabs"></div>
+      <div class="sidebar-foot">
+        <div class="pill-info"><span>Estado caja</span><b id="cashBadgeText">Abierta</b></div>
+        <div class="helper">Versión móvil incluida para teléfonos.</div>
+        <button class="btn ghost" id="btnSidebarLogout">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2 id="pageTitle">Dashboard</h2>
+          <small id="liveClock"></small>
+        </div>
+        <div class="top-actions">
+          <div class="user-chip" id="currentUserChip">Sin sesión</div>
+          <button class="btn ghost" id="btnOpenNotifications">Notificaciones <span id="notifyCountTop">0</span></button>
+          <span class="badge success" id="cashBadge">Caja abierta</span>
+          <button class="btn ghost" id="btnLogout">Salir</button>
+        </div>
+      </div>
+
+      <section class="tabs active" id="dashboard">
+        <div class="cards">
+          <div class="card metric"><div class="label">Ventas del día</div><div class="value" id="metricSalesDay">$0</div><div class="hint">Facturación acumulada hoy</div></div>
+          <div class="card metric"><div class="label">Pedidos activos</div><div class="value" id="metricOrdersActive">0</div><div class="hint">Pendientes, preparación o listos</div></div>
+          <div class="card metric"><div class="label">Ticket promedio</div><div class="value" id="metricAvgTicket">$0</div><div class="hint">Promedio de ventas de hoy</div></div>
+          <div class="card metric"><div class="label">Mesas ocupadas</div><div class="value" id="metricTablesBusy">0</div><div class="hint">Mesas con pedidos abiertos</div></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title"><h3>Actividad reciente</h3><small>Ventas del día</small></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Hora</th><th>Tipo</th><th>Mesa / Cliente</th><th>Pago</th><th>Total</th><th></th></tr></thead>
+                <tbody id="dashboardSales"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title"><h3>Productos vendidos hoy</h3><small>Top rápido</small></div>
+            <div id="topProductsDay"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title"><h3>Resumen operativo</h3><small>Estado general del negocio</small></div>
+          <div class="kpi-mini">
+            <div class="mini"><span>Productos</span><b id="miniProducts">0</b></div>
+            <div class="mini"><span>Categorías</span><b id="miniCategories">0</b></div>
+            <div class="mini"><span>Mesas</span><b id="miniTables">0</b></div>
+            <div class="mini"><span>Usuarios activos</span><b id="miniUsers">0</b></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tabs" id="pos">
+        <div class="pos-layout">
+          <div class="card">
+            <div class="section-title"><h3>Punto de venta</h3><small>Modo táctil y rápido para meseros</small></div>
+            <div class="menu-controls">
+              <input class="input" id="searchProduct" placeholder="Buscar producto..." />
+              <select class="select" id="orderType">
+                <option>Mesa</option>
+                <option>Para llevar</option>
+                <option>Delivery</option>
+              </select>
+            </div>
+            <div class="category-pills" id="categoryPills"></div>
+            <div class="product-grid" id="productGrid"></div>
+          </div>
+
+          <div class="cart-panel">
+            <div class="card">
+              <div class="section-title"><h3>Venta actual</h3><small id="cartOwnerInfo">Carrito del usuario</small></div>
+              <div class="inline">
+                <div class="field"><label class="label">Mesa</label><select class="select" id="cartTable"></select></div>
+                <div class="field"><label class="label">Cliente</label><input class="input" id="cartCustomer" placeholder="Nombre o referencia" /></div>
+              </div>
+              <div class="field" style="margin-top:10px"><label class="label">Notas del pedido</label><textarea class="textarea" id="cartNotes" placeholder="Sin cebolla, extra queso, etc."></textarea></div>
+              <div class="cart-items" id="cartItems" style="margin-top:12px"></div>
+              <div class="summary">
+                <div class="sum-line"><span>Subtotal</span><b id="sumSubtotal">$0</b></div>
+                <div class="sum-line"><span>Impuesto</span><b id="sumTax">$0</b></div>
+                <div class="sum-line"><span>Servicio</span><b id="sumService">$0</b></div>
+                <div class="sum-line total"><span>Total</span><b id="sumTotal">$0</b></div>
+              </div>
+              <div class="inline" style="margin-top:12px">
+                <button class="btn ghost" id="btnClearCart">Limpiar</button>
+                <button class="btn info" id="btnSendKitchen">Enviar a cocina</button>
+                <button class="btn primary" id="btnPay">Cobrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tabs" id="orders">
+        <div class="card">
+          <div class="section-title">
+            <h3 id="ordersTitle">Cocina y seguimiento</h3>
+            <div class="toolbar">
+              <select class="select" id="filterOrderStatus" style="min-width:180px">
+                <option>Todos</option>
+                <option>Pendiente</option>
+                <option>En preparación</option>
+                <option>Listo</option>
+                <option>Entregado</option>
+                <option>Pagado</option>
+              </select>
+              <select class="select" id="filterOrderScope" style="min-width:180px">
+                <option value="auto">Vista automática</option>
+                <option value="mine">Mis pedidos</option>
+                <option value="all">Todos</option>
+                <option value="ready">Listos para entregar</option>
+              </select>
+            </div>
+          </div>
+          <div id="ordersList" class="order-list"></div>
+        </div>
+      </section>
+
+      <section class="tabs" id="tables">
+        <div class="card">
+          <div class="section-title"><h3>Mesas</h3><small>Selecciona una mesa para iniciar pedido</small></div>
+          <div id="tablesGrid" class="table-grid"></div>
+        </div>
+      </section>
+
+      <section class="tabs" id="products">
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title"><h3>Productos</h3><div class="toolbar"><button class="btn primary" id="btnNewProduct">Nuevo producto</button></div></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Estado</th><th></th></tr></thead>
+                <tbody id="productsTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title"><h3>Categorías</h3><small>Organización de menú</small></div>
+            <div class="inline" style="margin-bottom:12px">
+              <input class="input" id="newCategoryName" placeholder="Nueva categoría" />
+              <button class="btn info" id="btnAddCategory">Agregar</button>
+            </div>
+            <div id="categoryList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tabs" id="reports">
+        <div class="card">
+          <div class="section-title"><h3>Reportes</h3><small>Ventas y productos por fecha</small></div>
+          <div class="inline">
+            <div class="field"><label class="label">Desde</label><input class="input" type="date" id="reportFrom"></div>
+            <div class="field"><label class="label">Hasta</label><input class="input" type="date" id="reportTo"></div>
+            <div class="field" style="justify-content:flex-end;display:flex;gap:10px;align-items:flex-end">
+              <button class="btn info" id="btnRunReport">Buscar</button>
+              <button class="btn ghost" id="btnPrintReport">Imprimir</button>
+            </div>
+          </div>
+        </div>
+        <div class="cards" style="margin-top:16px">
+          <div class="card metric"><div class="label">Ventas</div><div class="value" id="repCount">0</div><div class="hint">Cantidad de boletas</div></div>
+          <div class="card metric"><div class="label">Facturación</div><div class="value" id="repRevenue">$0</div><div class="hint">Total vendido</div></div>
+          <div class="card metric"><div class="label">Ticket promedio</div><div class="value" id="repAvg">$0</div><div class="hint">Promedio por venta</div></div>
+          <div class="card metric"><div class="label">Productos vendidos</div><div class="value" id="repItems">0</div><div class="hint">Suma de cantidades</div></div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="card">
+            <div class="section-title"><h3>Ventas encontradas</h3><small>Reimpresión de boletas</small></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Fecha</th><th>Tipo</th><th>Mesa / Cliente</th><th>Pago</th><th>Total</th><th></th></tr></thead>
+                <tbody id="reportSalesTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title"><h3>Resumen por producto</h3><small>Cantidad vendida</small></div>
+            <div id="reportProductSummary"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tabs" id="settings">
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title"><h3>Datos del negocio</h3><small>Configuración general</small></div>
+            <div class="inline">
+              <div class="field"><label class="label">Nombre negocio</label><input class="input" id="bizName"></div>
+              <div class="field"><label class="label">Moneda</label><input class="input" id="bizCurrency"></div>
+            </div>
+            <div class="inline" style="margin-top:10px">
+              <div class="field"><label class="label">Teléfono</label><input class="input" id="bizPhone"></div>
+              <div class="field"><label class="label">Dirección</label><input class="input" id="bizAddress"></div>
+            </div>
+            <div class="inline" style="margin-top:10px">
+              <div class="field"><label class="label">Impuesto %</label><input class="input" type="number" id="bizTax"></div>
+              <div class="field"><label class="label">Servicio %</label><input class="input" type="number" id="bizService"></div>
+              <div class="field"><label class="label">Estado de caja</label><select class="select" id="cashStatus"><option value="abierta">Abierta</option><option value="cerrada">Cerrada</option></select></div>
+            </div>
+            <div class="inline" style="margin-top:10px">
+              <div class="field"><label class="label">Cantidad de mesas</label><input class="input" type="number" min="1" id="tableCount"></div>
+              <div class="field"><label class="label">Logo</label><input class="input" type="file" accept="image/*" id="bizLogo"></div>
+            </div>
+            <div class="inline" style="margin-top:12px">
+              <button class="btn primary" id="btnSaveSettings">Guardar</button>
+              <button class="btn info" id="btnApplyTables">Aplicar mesas</button>
+              <button class="btn ghost" id="btnExportData">Exportar respaldo</button>
+              <label class="btn ghost" style="display:inline-flex;align-items:center;justify-content:center">Importar<input type="file" id="importData" accept="application/json" hidden></label>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title"><h3>Uso en teléfonos</h3><small>Acceso para meseros</small></div>
+            <div class="cart-item">
+              <b>Modo móvil ya incluido</b>
+              <div class="helper">Este archivo se adapta a celulares y tablets. Los meseros pueden entrar desde su teléfono si publicas el HTML en un hosting o servidor local del restaurante.</div>
+            </div>
+            <div class="cart-item">
+              <b>Importante</b>
+              <div class="helper">En un solo archivo HTML con localStorage, cada dispositivo guarda sus propios datos. Para que administrador, cocina y meseros compartan información en tiempo real entre varios teléfonos se necesita backend o base de datos en red.</div>
+            </div>
+            <div class="cart-item">
+              <b>Flujo incluido</b>
+              <div class="helper">Cuando cocina marca un pedido como <b>Listo</b>, el sistema crea una notificación interna para el mesero que tomó ese pedido.</div>
+            </div>
+            <div class="inline" style="margin-top:12px">
+              <button class="btn warning" id="btnSeed">Restaurar demo</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="usersCard" style="margin-top:16px">
+          <div class="section-title"><h3>Usuarios y permisos</h3><small>Solo administrador</small></div>
+          <div class="toolbar" style="margin-bottom:12px"><button class="btn primary" id="btnNewUser">Nuevo usuario</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th>Permisos</th><th></th></tr></thead>
+              <tbody id="usersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-nav" id="mobileNav"></div>
+
+  <div class="drawer" id="notificationDrawer">
+    <div class="drawer-box">
+      <div class="drawer-head section-title" style="margin:0"><h3>Notificaciones</h3><div class="toolbar"><button class="btn sm ghost" id="btnMarkAllNotifications">Marcar leídas</button><button class="btn sm ghost" data-close="notificationDrawer">Cerrar</button></div></div>
+      <div class="drawer-body">
+        <div id="notificationsList" class="notify-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="paymentModal">
+    <div class="modal-box" style="max-width:460px">
+      <div class="modal-header"><h3 style="margin:0">Cobrar venta</h3></div>
+      <div class="modal-body">
+        <div class="field"><label class="label">Método de pago</label><select class="select" id="paymentMethod"><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option><option>Mixto</option></select></div>
+        <div class="field" style="margin-top:12px"><label class="label">Total</label><input class="input" id="modalTotal" disabled></div>
+        <div class="field" style="margin-top:12px"><label class="label">Recibido</label><input class="input" type="number" id="amountReceived"></div>
+        <div class="field" style="margin-top:12px"><label class="label">Vuelto</label><input class="input" id="amountChange" disabled></div>
+      </div>
+      <div class="modal-footer"><button class="btn ghost" data-close="paymentModal">Cancelar</button><button class="btn primary" id="btnConfirmPayment">Confirmar pago</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="productModal">
+    <div class="modal-box">
+      <div class="modal-header"><h3 style="margin:0" id="productModalTitle">Nuevo producto</h3></div>
+      <div class="modal-body">
+        <input type="hidden" id="prodId">
+        <div class="inline">
+          <div class="field"><label class="label">Nombre</label><input class="input" id="prodName"></div>
+          <div class="field"><label class="label">Categoría</label><select class="select" id="prodCategory"></select></div>
+        </div>
+        <div class="inline" style="margin-top:10px">
+          <div class="field"><label class="label">Precio</label><input class="input" type="number" step="0.01" min="0" id="prodPrice"></div>
+          <div class="field"><label class="label">Estado</label><select class="select" id="prodActive"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
+        </div>
+        <div class="field" style="margin-top:10px"><label class="label">Descripción</label><textarea class="textarea" id="prodDesc"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn ghost" data-close="productModal">Cerrar</button><button class="btn primary" id="btnSaveProduct">Guardar producto</button></div>
+    </div>
+  </div>
+
+  <div class="modal" id="userModal">
+    <div class="modal-box">
+      <div class="modal-header"><h3 style="margin:0" id="userModalTitle">Nuevo usuario</h3></div>
+      <div class="modal-body">
+        <input type="hidden" id="userId">
+        <div class="inline">
+          <div class="field"><label class="label">Nombre</label><input class="input" id="userName"></div>
+          <div class="field"><label class="label">Usuario</label><input class="input" id="userUsername"></div>
+          <div class="field"><label class="label">Rol</label><select class="select" id="userRole"><option>Administrador</option><option>Mesero</option><option>Cocina</option></select></div>
+        </div>
+        <div class="inline" style="margin-top:10px">
+          <div class="field"><label class="label">Contraseña</label><input class="input" id="userPassword"></div>
+          <div class="field"><label class="label">Estado</label><select class="select" id="userActive"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
+        </div>
+        <div class="field" style="margin-top:12px"><label class="label">Permisos</label><div class="perm-grid" id="permissionsGrid"></div></div>
+      </div>
+      <div class="modal-footer"><button class="btn ghost" data-close="userModal">Cancelar</button><button class="btn primary" id="btnSaveUser">Guardar usuario</button></div>
+    </div>
+  </div>
+
+  <section class="receipt" id="receiptPrint"></section>
+
+  <script>
+    const STORAGE_KEY = 'restaurant_pos_roles_v2';
+    const SESSION_KEY = 'restaurant_pos_roles_session_v2';
+    const $ = (s,p=document)=>p.querySelector(s);
+    const $$ = (s,p=document)=>[...p.querySelectorAll(s)];
+    const uid = (p='id') => `${p}_${Math.random().toString(36).slice(2,8)}${Date.now().toString(36).slice(-4)}`;
+    const escapeQuotes = (v='') => String(v).replace(/'/g, "\\'");
+    const onlyDate = (v='') => String(v).slice(0,10);
+
+    const PERMISSION_LABELS = {
+      dashboard:'Dashboard',
+      pos:'Punto de venta',
+      tables:'Mesas',
+      kitchen:'Cocina / pedidos',
+      products:'Productos',
+      reports:'Reportes',
+      settings:'Configuración',
+      users:'Usuarios y permisos',
+      pay:'Cobrar',
+      send:'Enviar a cocina',
+      ordersAll:'Ver todos los pedidos',
+      markReady:'Marcar pedidos listos'
+    };
+
+    function allPermissions(value=false){
+      return Object.fromEntries(Object.keys(PERMISSION_LABELS).map(k=>[k,value]));
+    }
+
+    function rolePermissions(role){
+      const p = allPermissions(false);
+      if(role==='Administrador') return allPermissions(true);
+      if(role==='Mesero') return {...p, dashboard:true, pos:true, tables:true, kitchen:true, pay:true, send:true};
+      if(role==='Cocina') return {...p, dashboard:true, kitchen:true, markReady:true, ordersAll:true};
+      return p;
+    }
+
+    function defaultCart(){
+      return {items:[], tableId:'1', customer:'', notes:'', orderType:'Mesa', linkedOrderId:null};
+    }
+
+    function defaultData(){
+      return {
+        settings:{
+          businessName:'Restaurante PRO', currency:'$', phone:'+56 9 0000 0000', address:'Dirección del negocio', taxPercent:19, servicePercent:10,
+          logo:'', cashStatus:'abierta'
+        },
+        categories:['Entradas','Platos fuertes','Bebidas','Postres','Promociones'],
+        products:[
+          {id:uid('p'),name:'Hamburguesa Clásica',category:'Platos fuertes',price:8990,desc:'Carne, queso, lechuga y tomate',active:true},
+          {id:uid('p'),name:'Pizza Margarita',category:'Platos fuertes',price:10990,desc:'Tomate, queso y albahaca',active:true},
+          {id:uid('p'),name:'Papas Fritas',category:'Entradas',price:3990,desc:'Papas crocantes',active:true},
+          {id:uid('p'),name:'Ensalada César',category:'Entradas',price:5490,desc:'Lechuga, pollo y aderezo',active:true},
+          {id:uid('p'),name:'Gaseosa 350ml',category:'Bebidas',price:1990,desc:'Variedad de sabores',active:true},
+          {id:uid('p'),name:'Jugo Natural',category:'Bebidas',price:2990,desc:'Fruta de temporada',active:true},
+          {id:uid('p'),name:'Brownie con helado',category:'Postres',price:4290,desc:'Chocolate intenso',active:true},
+          {id:uid('p'),name:'Combo Almuerzo',category:'Promociones',price:12990,desc:'Plato + bebida + postre',active:true}
+        ],
+        tables:Array.from({length:12},(_,i)=>({id:String(i+1), name:`Mesa ${i+1}`})),
+        users:[
+          {id:'u_admin',name:'Administrador General',username:'admin',password:'admin123',role:'Administrador',active:true,permissions:rolePermissions('Administrador')},
+          {id:'u_waiter1',name:'Mesero Principal',username:'mesero1',password:'1234',role:'Mesero',active:true,permissions:rolePermissions('Mesero')},
+          {id:'u_kitchen1',name:'Cocina',username:'cocina',password:'1234',role:'Cocina',active:true,permissions:rolePermissions('Cocina')}
+        ],
+        carts:{u_admin:defaultCart(),u_waiter1:defaultCart(),u_kitchen1:defaultCart()},
+        orders:[],
+        sales:[],
+        notifications:[]
+      };
+    }
+
+    let db = loadData();
+    let currentUser = null;
+    let activeTab = 'dashboard';
+    let categoryFilter = 'Todos';
+
+    function migrateData(parsed){
+      const base = defaultData();
+      const merged = {
+        ...base,
+        ...parsed,
+        settings:{...base.settings,...(parsed.settings||{})},
+        categories:Array.isArray(parsed.categories)?parsed.categories:base.categories,
+        products:Array.isArray(parsed.products)?parsed.products:base.products,
+        tables:Array.isArray(parsed.tables)?parsed.tables:base.tables,
+        users:Array.isArray(parsed.users)&&parsed.users.length?parsed.users:base.users,
+        carts:typeof parsed.carts==='object'&&parsed.carts?parsed.carts:base.carts,
+        orders:Array.isArray(parsed.orders)?parsed.orders:base.orders,
+        sales:Array.isArray(parsed.sales)?parsed.sales:base.sales,
+        notifications:Array.isArray(parsed.notifications)?parsed.notifications:base.notifications
+      };
+      merged.users = merged.users.map(u=>({
+        ...u,
+        active: u.active!==false,
+        permissions: {...rolePermissions(u.role || 'Mesero'), ...(u.permissions||{})}
+      }));
+      merged.users.forEach(u=>{ if(!merged.carts[u.id]) merged.carts[u.id]=defaultCart(); });
+      merged.orders = merged.orders.map((o,i)=>(
+        {statusHistory:[], ...o, number:o.number || i+1, waiterId:o.waiterId || '', waiterName:o.waiterName || '', orderType:o.orderType || 'Mesa'}
+      ));
+      return merged;
+    }
+
+    function loadData(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw){
+          const seed = defaultData();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+          return seed;
+        }
+        return migrateData(JSON.parse(raw));
+      }catch(e){
+        console.error(e);
+        return defaultData();
+      }
+    }
+
+    function saveData(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    function money(v){
+      const currency = db.settings.currency || '$';
+      const n = Number(v||0);
+      return currency + n.toLocaleString('es-CL',{minimumFractionDigits:0,maximumFractionDigits:0});
+    }
+
+    function nowText(){
+      return new Date().toLocaleString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }
+
+    function formatWhen(v){
+      try{return new Date(v).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return v;}
+    }
+
+    function updateClock(){ $('#liveClock').textContent = nowText(); }
+    setInterval(updateClock,1000); updateClock();
+
+    function hasPerm(name){
+      return !!(currentUser && currentUser.permissions && currentUser.permissions[name]);
+    }
+
+    function availableTabs(){
+      return [
+        hasPerm('dashboard') && {id:'dashboard',label:'Dashboard',hint:'Resumen'},
+        hasPerm('pos') && {id:'pos',label:'Punto de venta',hint:'Meseros'},
+        (hasPerm('kitchen') || hasPerm('pos')) && {id:'orders',label:'Cocina / Pedidos',hint:'Seguimiento'},
+        hasPerm('tables') && {id:'tables',label:'Mesas',hint:'Salon'},
+        hasPerm('products') && {id:'products',label:'Productos',hint:'Menú'},
+        hasPerm('reports') && {id:'reports',label:'Reportes',hint:'Ventas'},
+        (hasPerm('settings') || hasPerm('users')) && {id:'settings',label:'Configuración',hint:'Sistema'}
+      ].filter(Boolean);
+    }
+
+    function canViewOrder(order){
+      if(!currentUser) return false;
+      if(hasPerm('ordersAll') || currentUser.role==='Administrador') return true;
+      return order.waiterId===currentUser.id;
+    }
+
+    function getCurrentCart(){
+      if(!currentUser) return defaultCart();
+      if(!db.carts[currentUser.id]) db.carts[currentUser.id] = defaultCart();
+      return db.carts[currentUser.id];
+    }
+
+    function setCurrentCart(next){
+      if(!currentUser) return;
+      db.carts[currentUser.id] = next;
+    }
+
+    function getCartTotals(){
+      const cart = getCurrentCart();
+      const subtotal = cart.items.reduce((acc,it)=>acc+(Number(it.price)*Number(it.qty)),0);
+      const tax = subtotal * (Number(db.settings.taxPercent||0)/100);
+      const service = subtotal * (Number(db.settings.servicePercent||0)/100);
+      const total = subtotal + tax + service;
+      return {subtotal,tax,service,total};
+    }
+
+    function occupiedTables(){
+      return new Set(db.orders.filter(o=>['Pendiente','En preparación','Listo','Entregado'].includes(o.status) && o.orderType==='Mesa').map(o=>o.tableId).filter(Boolean));
+    }
+
+    function login(username,password){
+      const user = db.users.find(u=>u.active && u.username.toLowerCase()===String(username).trim().toLowerCase() && u.password===password);
+      if(!user) return false;
+      currentUser = user;
+      localStorage.setItem(SESSION_KEY, user.id);
+      $('#loginError').style.display='none';
+      $('#loginScreen').classList.remove('open');
+      const tabs = availableTabs();
+      activeTab = tabs[0]?.id || 'dashboard';
+      render();
+      return true;
+    }
+
+    function tryRestoreSession(){
+      const id = localStorage.getItem(SESSION_KEY);
+      if(!id) return false;
+      const user = db.users.find(u=>u.id===id && u.active);
+      if(!user) return false;
+      currentUser = user;
+      $('#loginScreen').classList.remove('open');
+      const tabs = availableTabs();
+      activeTab = tabs.some(t=>t.id===activeTab) ? activeTab : (tabs[0]?.id || 'dashboard');
+      render();
+      return true;
+    }
+
+    function logout(){
+      currentUser = null;
+      localStorage.removeItem(SESSION_KEY);
+      $('#loginPassword').value='';
+      $('#loginScreen').classList.add('open');
+      $('#currentUserChip').textContent='Sin sesión';
+      $('#pageTitle').textContent='Restaurante PRO';
+      closeModal('notificationDrawer');
+    }
+
+    function setBrand(){
+      $('#brandNameSide').textContent = db.settings.businessName;
+      $('#brandMetaSide').textContent = `${db.products.length} productos • ${db.tables.length} mesas`;
+      const logo = db.settings.logo;
+      const logoHtml = logo ? `<img src="${logo}" alt="logo">` : '🍽️';
+      $('#brandLogo').innerHTML = logoHtml;
+      $('#loginLogo').innerHTML = logoHtml;
+      $('#cashBadgeText').textContent = db.settings.cashStatus==='abierta' ? 'Abierta' : 'Cerrada';
+      $('#cashBadge').textContent = db.settings.cashStatus==='abierta' ? 'Caja abierta' : 'Caja cerrada';
+      $('#cashBadge').className = `badge ${db.settings.cashStatus==='abierta' ? 'success' : 'danger'}`;
+    }
+
+    function renderNavigation(){
+      const tabs = availableTabs();
+      if(!tabs.some(t=>t.id===activeTab)) activeTab = tabs[0]?.id || 'dashboard';
+      $('#navTabs').innerHTML = tabs.map(t=>`
+        <button class="${activeTab===t.id?'active':''}" data-tab="${t.id}"><span>${t.label}</span><small>${t.hint}</small></button>
+      `).join('');
+      $('#mobileNav').innerHTML = tabs.slice(0,5).map(t=>`<button class="${activeTab===t.id?'active':''}" data-tab="${t.id}">${t.label}</button>`).join('');
+      const names = Object.fromEntries(tabs.map(t=>[t.id,t.label]));
+      $('#pageTitle').textContent = names[activeTab] || 'Sistema';
+      $$('.tabs').forEach(tab=>tab.classList.toggle('active', tab.id===activeTab));
+    }
+
+    function switchTab(tab){
+      if(!availableTabs().some(t=>t.id===tab)) return;
+      activeTab = tab;
+      renderNavigation();
+      render();
+    }
+
+    function renderUserHeader(){
+      if(!currentUser) return;
+      const unread = db.notifications.filter(n=>n.userId===currentUser.id && !n.read).length;
+      $('#currentUserChip').innerHTML = `<b>${currentUser.name}</b> · ${currentUser.role}`;
+      $('#notifyCountTop').textContent = unread;
+      $('#cartOwnerInfo').textContent = `Carrito de ${currentUser.name}`;
+    }
+
+    function renderDashboard(){
+      if(!hasPerm('dashboard')) return;
+      const today = new Date().toISOString().slice(0,10);
+      const salesToday = db.sales.filter(s=>onlyDate(s.dateTime)===today);
+      const revenueDay = salesToday.reduce((a,b)=>a+b.total,0);
+      const activeOrders = db.orders.filter(o=>['Pendiente','En preparación','Listo'].includes(o.status));
+      const avgTicket = salesToday.length ? revenueDay/salesToday.length : 0;
+      $('#metricSalesDay').textContent = money(revenueDay);
+      $('#metricOrdersActive').textContent = activeOrders.length;
+      $('#metricAvgTicket').textContent = money(avgTicket);
+      $('#metricTablesBusy').textContent = occupiedTables().size;
+      $('#miniProducts').textContent = db.products.length;
+      $('#miniCategories').textContent = db.categories.length;
+      $('#miniTables').textContent = db.tables.length;
+      $('#miniUsers').textContent = db.users.filter(u=>u.active).length;
+
+      $('#dashboardSales').innerHTML = salesToday.slice().reverse().slice(0,8).map(s=>`
+        <tr>
+          <td>${(s.dateTime||'').slice(11,16)}</td>
+          <td>${s.orderType}</td>
+          <td>${s.tableName || s.customer || '-'}</td>
+          <td>${s.paymentMethod}</td>
+          <td>${money(s.total)}</td>
+          <td><button class="btn sm ghost" onclick="reprintSale('${s.id}')">Reimprimir</button></td>
+        </tr>
+      `).join('') || `<tr><td colspan="6"><div class="empty">Sin ventas hoy</div></td></tr>`;
+
+      const countMap = {};
+      salesToday.forEach(s=>s.items.forEach(it=>countMap[it.name]=(countMap[it.name]||0)+it.qty));
+      const top = Object.entries(countMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+      $('#topProductsDay').innerHTML = top.length ? top.map(([name,qty])=>`<div class="cart-item"><div class="cart-row"><b>${name}</b><span class="badge info">${qty} vendidos</span></div></div>`).join('') : `<div class="empty">Aún no hay productos vendidos hoy</div>`;
+    }
+
+    function renderCategoryPills(){
+      const cats = ['Todos', ...db.categories];
+      $('#categoryPills').innerHTML = cats.map(c=>`<button class="pill ${categoryFilter===c?'active':''}" onclick="setCategoryFilter('${escapeQuotes(c)}')">${c}</button>`).join('');
+    }
+
+    function renderProductsGrid(){
+      if(!hasPerm('pos')) return;
+      const q = ($('#searchProduct').value||'').toLowerCase().trim();
+      const products = db.products.filter(p=>p.active)
+        .filter(p=>categoryFilter==='Todos' ? true : p.category===categoryFilter)
+        .filter(p=>!q || p.name.toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q));
+      $('#productGrid').innerHTML = products.map(p=>`
+        <div class="product-card" onclick="addToCart('${p.id}')">
+          <div class="product-top"><div><div class="product-name">${p.name}</div><div class="muted" style="font-size:13px">${p.category}</div></div><span class="badge success">Disponible</span></div>
+          <div class="muted" style="min-height:36px;font-size:13px">${p.desc || 'Sin descripción'}</div>
+          <div class="cart-row"><span class="price">${money(p.price)}</span><button class="btn sm primary">Agregar</button></div>
+        </div>
+      `).join('') || `<div class="empty">No hay productos para mostrar</div>`;
+    }
+
+    function renderCartTableSelect(){
+      const cart = getCurrentCart();
+      const canUseTable = $('#orderType').value === 'Mesa';
+      $('#cartTable').disabled = !canUseTable;
+      $('#cartTable').innerHTML = `<option value="">Seleccionar mesa</option>` + db.tables.map(t=>`<option value="${t.id}" ${cart.tableId===t.id?'selected':''}>${t.name}</option>`).join('');
+    }
+
+    function renderCart(){
+      if(!hasPerm('pos')) return;
+      const cart = getCurrentCart();
+      $('#orderType').value = cart.orderType || 'Mesa';
+      $('#cartCustomer').value = cart.customer || '';
+      $('#cartNotes').value = cart.notes || '';
+      renderCartTableSelect();
+      $('#cartItems').innerHTML = cart.items.map(it=>`
+        <div class="cart-item">
+          <div class="cart-row"><div><b>${it.name}</b><div class="muted" style="font-size:13px">${money(it.price)} c/u</div></div><button class="btn sm danger" onclick="removeCartItem('${it.id}')">Eliminar</button></div>
+          <div class="cart-row"><div class="qty-box"><button class="qty-btn" onclick="changeQty('${it.id}',-1)">-</button><b>${it.qty}</b><button class="qty-btn" onclick="changeQty('${it.id}',1)">+</button></div><b>${money(it.qty*it.price)}</b></div>
+        </div>
+      `).join('') || `<div class="empty">Agrega productos para iniciar una venta</div>`;
+      const t = getCartTotals();
+      $('#sumSubtotal').textContent = money(t.subtotal);
+      $('#sumTax').textContent = money(t.tax);
+      $('#sumService').textContent = money(t.service);
+      $('#sumTotal').textContent = money(t.total);
+      $('#btnPay').style.display = hasPerm('pay') ? '' : 'none';
+      $('#btnSendKitchen').style.display = hasPerm('send') ? '' : 'none';
+    }
+
+    function renderPOS(){
+      if(!hasPerm('pos')) return;
+      renderCategoryPills();
+      renderProductsGrid();
+      renderCart();
+    }
+
+    function badgeByStatus(status){
+      return status==='Pendiente' ? 'warning' : status==='En preparación' ? 'info' : status==='Listo' ? 'success' : status==='Pagado' ? 'success' : 'danger';
+    }
+
+    function renderOrders(){
+      const title = currentUser && (currentUser.role==='Cocina' || hasPerm('markReady')) ? 'Cocina y preparación' : 'Seguimiento de pedidos';
+      $('#ordersTitle').textContent = title;
+      let scope = $('#filterOrderScope').value || 'auto';
+      const statusFilter = $('#filterOrderStatus').value || 'Todos';
+      let list = db.orders.slice().sort((a,b)=>a.dateTime < b.dateTime ? 1 : -1);
+
+      if(scope==='auto'){
+        scope = hasPerm('ordersAll') ? 'all' : 'mine';
+      }
+      if(scope==='mine') list = list.filter(o=>o.waiterId===currentUser.id);
+      else if(scope==='ready') list = list.filter(o=>o.status==='Listo');
+      else if(scope==='all' && !hasPerm('ordersAll')) list = list.filter(o=>canViewOrder(o));
+      else list = list.filter(o=>canViewOrder(o) || hasPerm('ordersAll'));
+      if(statusFilter!=='Todos') list = list.filter(o=>o.status===statusFilter);
+
+      $('#ordersList').innerHTML = list.map(o=>{
+        const readyHighlight = o.status==='Listo' && o.waiterId===currentUser.id ? 'highlight-ready' : '';
+        const canKitchenEdit = hasPerm('markReady') || currentUser.role==='Administrador';
+        const canLoad = hasPerm('pos') && (o.waiterId===currentUser.id || hasPerm('ordersAll'));
+        const canDeliver = hasPerm('pos') && (o.waiterId===currentUser.id || hasPerm('ordersAll')) && ['Listo','En preparación','Pendiente'].includes(o.status);
+        return `
+          <div class="order-card ${readyHighlight}">
+            <div class="order-head">
+              <div>
+                <b>Pedido #${o.number}</b>
+                <div class="muted" style="font-size:13px">${formatWhen(o.dateTime)} • ${o.orderType}${o.tableName ? ' • '+o.tableName : ''}${o.customer ? ' • '+o.customer : ''}</div>
+                <div class="muted" style="font-size:13px">Mesero: ${o.waiterName || '-'}</div>
+              </div>
+              <div class="toolbar">
+                <span class="badge ${badgeByStatus(o.status)}">${o.status}</span>
+                ${o.saleId ? `<button class="btn sm ghost" onclick="reprintSale('${o.saleId}')">Boleta</button>` : ''}
+              </div>
+            </div>
+            <div class="order-items">
+              ${o.items.map(it=>`<div class="sum-line"><span>${it.qty} x ${it.name}</span><b>${money(it.qty*it.price)}</b></div>`).join('')}
+            </div>
+            <div class="sum-line"><span>Notas</span><span class="muted">${o.notes || '-'}</span></div>
+            <div class="sum-line"><span>Total estimado</span><b>${money(o.total)}</b></div>
+            <div class="order-actions">
+              ${canLoad ? `<button class="btn sm info" onclick="loadOrderToCart('${o.id}')">Cargar al POS</button>` : ''}
+              ${canKitchenEdit && o.status==='Pendiente' ? `<button class="btn sm info" onclick="updateOrderStatus('${o.id}','En preparación')">Preparar</button>` : ''}
+              ${canKitchenEdit && ['Pendiente','En preparación'].includes(o.status) ? `<button class="btn sm primary" onclick="updateOrderStatus('${o.id}','Listo')">Marcar listo</button>` : ''}
+              ${canDeliver && o.status==='Listo' ? `<button class="btn sm warning" onclick="updateOrderStatus('${o.id}','Entregado')">Entregar</button>` : ''}
+              ${hasPerm('pay') && (o.waiterId===currentUser.id || hasPerm('ordersAll')) && ['Entregado','Listo'].includes(o.status) && !o.saleId ? `<button class="btn sm primary" onclick="loadOrderToCart('${o.id}')">Cobrar</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('') || `<div class="empty">No hay pedidos en esta vista</div>`;
+    }
+
+    function renderTables(){
+      if(!hasPerm('tables')) return;
+      const busy = occupiedTables();
+      const cart = getCurrentCart();
+      $('#tablesGrid').innerHTML = db.tables.map(t=>`
+        <div class="table-card ${busy.has(t.id)?'occupied':'free'} ${cart.tableId===t.id?'selected':''}" onclick="selectTable('${t.id}')">
+          <div class="table-number">${t.id}</div>
+          <div><b>${t.name}</b></div>
+          <div class="muted">${busy.has(t.id)?'Ocupada':'Libre'}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderProductsTable(){
+      if(!hasPerm('products')) return;
+      $('#productsTable').innerHTML = db.products.map(p=>`
+        <tr>
+          <td><b>${p.name}</b><div class="muted">${p.desc || ''}</div></td>
+          <td>${p.category}</td>
+          <td>${money(p.price)}</td>
+          <td><span class="badge ${p.active?'success':'danger'}">${p.active?'Activo':'Inactivo'}</span></td>
+          <td><div class="toolbar"><button class="btn sm info" onclick="editProduct('${p.id}')">Editar</button><button class="btn sm danger" onclick="deleteProduct('${p.id}')">Eliminar</button></div></td>
+        </tr>
+      `).join('') || `<tr><td colspan="5"><div class="empty">Sin productos</div></td></tr>`;
+      $('#categoryList').innerHTML = db.categories.map(c=>`<div class="cart-item"><div class="cart-row"><b>${c}</b><button class="btn sm danger" onclick="deleteCategory('${escapeQuotes(c)}')">Eliminar</button></div></div>`).join('') || `<div class="empty">Sin categorías</div>`;
+      $('#prodCategory').innerHTML = db.categories.map(c=>`<option>${c}</option>`).join('');
+    }
+
+    function renderReports(){
+      if(!hasPerm('reports')) return;
+      const from = $('#reportFrom').value || '0000-01-01';
+      const to = $('#reportTo').value || '9999-12-31';
+      const filtered = db.sales.filter(s=>{const d = onlyDate(s.dateTime); return d>=from && d<=to;}).sort((a,b)=>a.dateTime < b.dateTime ? 1 : -1);
+      const revenue = filtered.reduce((a,b)=>a+b.total,0);
+      const itemsCount = filtered.reduce((a,s)=>a + s.items.reduce((x,it)=>x+it.qty,0),0);
+      $('#repCount').textContent = filtered.length;
+      $('#repRevenue').textContent = money(revenue);
+      $('#repAvg').textContent = money(filtered.length ? revenue/filtered.length : 0);
+      $('#repItems').textContent = itemsCount;
+      $('#reportSalesTable').innerHTML = filtered.map(s=>`
+        <tr>
+          <td>${formatWhen(s.dateTime)}</td>
+          <td>${s.orderType}</td>
+          <td>${s.tableName || s.customer || '-'}</td>
+          <td>${s.paymentMethod}</td>
+          <td>${money(s.total)}</td>
+          <td><button class="btn sm ghost" onclick="reprintSale('${s.id}')">Boleta</button></td>
+        </tr>
+      `).join('') || `<tr><td colspan="6"><div class="empty">No hay ventas en el rango seleccionado</div></td></tr>`;
+      const prodMap = {};
+      filtered.forEach(s=>s.items.forEach(it=>prodMap[it.name]=(prodMap[it.name]||0)+it.qty));
+      const prods = Object.entries(prodMap).sort((a,b)=>b[1]-a[1]);
+      $('#reportProductSummary').innerHTML = prods.length ? prods.map(([name,qty])=>`<div class="cart-item"><div class="cart-row"><span>${name}</span><b>${qty}</b></div></div>`).join('') : `<div class="empty">Sin datos de productos vendidos</div>`;
+    }
+
+    function renderSettings(){
+      if(!(hasPerm('settings') || hasPerm('users'))) return;
+      const showBiz = hasPerm('settings');
+      $$('#settings > .grid-2 .card').forEach(card=>card.style.display = showBiz ? '' : 'none');
+      $('#usersCard').style.display = hasPerm('users') ? '' : 'none';
+      $('#bizName').value = db.settings.businessName || '';
+      $('#bizCurrency').value = db.settings.currency || '$';
+      $('#bizPhone').value = db.settings.phone || '';
+      $('#bizAddress').value = db.settings.address || '';
+      $('#bizTax').value = db.settings.taxPercent ?? 0;
+      $('#bizService').value = db.settings.servicePercent ?? 0;
+      $('#cashStatus').value = db.settings.cashStatus || 'abierta';
+      $('#tableCount').value = db.tables.length;
+      renderUsersTable();
+    }
+
+    function renderUsersTable(){
+      if(!hasPerm('users')) return;
+      $('#usersTable').innerHTML = db.users.map(u=>`
+        <tr>
+          <td><b>${u.name}</b></td>
+          <td>${u.username}</td>
+          <td>${u.role}</td>
+          <td><span class="badge ${u.active?'success':'danger'}">${u.active?'Activo':'Inactivo'}</span></td>
+          <td>${Object.entries(u.permissions).filter(([,v])=>v).map(([k])=>PERMISSION_LABELS[k]).slice(0,4).join(', ')}${Object.entries(u.permissions).filter(([,v])=>v).length>4?'...':''}</td>
+          <td><div class="toolbar"><button class="btn sm info" onclick="editUser('${u.id}')">Editar</button>${u.id!==currentUser.id ? `<button class="btn sm danger" onclick="deleteUser('${u.id}')">Eliminar</button>` : ''}</div></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderNotifications(){
+      if(!currentUser) return;
+      const notes = db.notifications.filter(n=>n.userId===currentUser.id).sort((a,b)=>a.createdAt < b.createdAt ? 1 : -1);
+      $('#notificationsList').innerHTML = notes.map(n=>`
+        <div class="notify-card ${n.read ? '' : 'unread'}">
+          <div class="cart-row"><b>${n.title}</b><small class="muted">${formatWhen(n.createdAt)}</small></div>
+          <div style="margin-top:8px">${n.message}</div>
+          ${n.orderId ? `<div class="toolbar" style="margin-top:10px"><button class="btn sm ghost" onclick="openOrderFromNotification('${n.id}','${n.orderId}')">Abrir pedido</button></div>` : ''}
+        </div>
+      `).join('') || `<div class="empty">No tienes notificaciones</div>`;
+    }
+
+    function pushNotification(userId, title, message, orderId=''){
+      db.notifications.push({id:uid('n'), userId, title, message, orderId, createdAt:new Date().toISOString(), read:false});
+    }
+
+    function markAllNotificationsRead(){
+      if(!currentUser) return;
+      db.notifications.forEach(n=>{ if(n.userId===currentUser.id) n.read=true; });
+      saveData();
+      renderUserHeader();
+      renderNotifications();
+    }
+
+    function openOrderFromNotification(noteId, orderId){
+      const note = db.notifications.find(n=>n.id===noteId && n.userId===currentUser.id);
+      if(note) note.read = true;
+      saveData();
+      renderUserHeader();
+      closeModal('notificationDrawer');
+      switchTab('orders');
+      $('#filterOrderStatus').value = 'Todos';
+      $('#filterOrderScope').value = 'mine';
+      renderOrders();
+      const el = [...$('#ordersList').children].find(card=>card.textContent.includes(`Pedido #${db.orders.find(o=>o.id===orderId)?.number || ''}`));
+      if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    window.openOrderFromNotification = openOrderFromNotification;
+
+    function saveCurrentCartMeta(){
+      const cart = getCurrentCart();
+      cart.orderType = $('#orderType').value;
+      cart.tableId = $('#cartTable').value;
+      cart.customer = $('#cartCustomer').value.trim();
+      cart.notes = $('#cartNotes').value.trim();
+      saveData();
+    }
+
+    function addToCart(prodId){
+      if(!hasPerm('pos')) return;
+      const product = db.products.find(p=>p.id===prodId && p.active);
+      if(!product) return;
+      const cart = getCurrentCart();
+      const found = cart.items.find(i=>i.productId===prodId);
+      if(found) found.qty += 1;
+      else cart.items.push({id:uid('ci'),productId:prodId,name:product.name,price:Number(product.price),qty:1});
+      renderCart(); saveData();
+    }
+    window.addToCart = addToCart;
+
+    function removeCartItem(id){
+      const cart = getCurrentCart();
+      cart.items = cart.items.filter(i=>i.id!==id);
+      renderCart(); saveData();
+    }
+    window.removeCartItem = removeCartItem;
+
+    function changeQty(id,diff){
+      const cart = getCurrentCart();
+      const item = cart.items.find(i=>i.id===id);
+      if(!item) return;
+      item.qty += diff;
+      if(item.qty<=0) cart.items = cart.items.filter(i=>i.id!==id);
+      renderCart(); saveData();
+    }
+    window.changeQty = changeQty;
+
+    function selectTable(id){
+      if(!hasPerm('tables') && !hasPerm('pos')) return;
+      const cart = getCurrentCart();
+      cart.orderType = 'Mesa';
+      cart.tableId = id;
+      if($('#orderType')) $('#orderType').value = 'Mesa';
+      renderTables(); renderCart(); saveData();
+    }
+    window.selectTable = selectTable;
+
+    function createOrder(status='Pendiente'){
+      const cart = getCurrentCart();
+      if(!cart.items.length){ alert('Agrega productos al carrito.'); return null; }
+      saveCurrentCartMeta();
+      const tableId = cart.orderType==='Mesa' ? ($('#cartTable').value || cart.tableId || '') : '';
+      const tableName = tableId ? (db.tables.find(t=>t.id===tableId)?.name || '') : '';
+      const totals = getCartTotals();
+      const order = {
+        id:uid('o'),
+        number:(db.orders.at(-1)?.number || 0)+1,
+        dateTime:new Date().toISOString(),
+        orderType:cart.orderType,
+        tableId, tableName,
+        customer:cart.customer,
+        notes:cart.notes,
+        items:cart.items.map(i=>({productId:i.productId,name:i.name,price:i.price,qty:i.qty})),
+        subtotal:totals.subtotal,
+        tax:totals.tax,
+        service:totals.service,
+        total:totals.total,
+        status,
+        waiterId:currentUser.id,
+        waiterName:currentUser.name,
+        saleId:null,
+        statusHistory:[{status, by:currentUser.name, at:new Date().toISOString()}]
+      };
+      db.orders.push(order);
+      saveData();
+      return order;
+    }
+
+    function clearCart(){
+      setCurrentCart(defaultCart());
+      render();
+    }
+
+    function makeSaleFromOrder(order,paymentMethod){
+      const sale = {
+        id:uid('s'), orderId:order.id, number:(db.sales.at(-1)?.number || 0)+1, dateTime:new Date().toISOString(),
+        orderType:order.orderType, tableId:order.tableId, tableName:order.tableName, customer:order.customer, notes:order.notes,
+        paymentMethod, items:order.items.map(i=>({...i})), subtotal:order.subtotal, tax:order.tax, service:order.service, total:order.total,
+        waiterName:order.waiterName
+      };
+      db.sales.push(sale);
+      return sale;
+    }
+
+    function sendKitchen(){
+      if(!hasPerm('send')) return alert('Tu usuario no tiene permiso para enviar pedidos a cocina.');
+      const order = createOrder('Pendiente');
+      if(!order) return;
+      clearCart();
+      render();
+      switchTab('orders');
+      alert(`Pedido #${order.number} enviado a cocina.`);
+    }
+
+    function updateOrderStatus(id,status){
+      const order = db.orders.find(o=>o.id===id);
+      if(!order) return;
+      order.status = status;
+      order.statusHistory = order.statusHistory || [];
+      order.statusHistory.push({status, by:currentUser?.name || 'Sistema', at:new Date().toISOString()});
+      if(status==='Listo' && order.waiterId){
+        pushNotification(order.waiterId, `Pedido #${order.number} listo`, `La cocina marcó como listo el pedido ${order.tableName || order.customer || ''}.`, order.id);
+      }
+      saveData();
+      render();
+    }
+    window.updateOrderStatus = updateOrderStatus;
+
+    function loadOrderToCart(id){
+      const order = db.orders.find(o=>o.id===id);
+      if(!order) return;
+      if(!hasPerm('pos')) return;
+      setCurrentCart({
+        items:order.items.map(i=>({...i,id:uid('ci')})),
+        tableId:order.tableId || '', customer:order.customer || '', notes:order.notes || '', orderType:order.orderType || 'Mesa', linkedOrderId:order.id
+      });
+      switchTab('pos');
+    }
+    window.loadOrderToCart = loadOrderToCart;
+
+    function payCurrentCart(){
+      if(!hasPerm('pay')) return alert('Tu usuario no tiene permiso para cobrar.');
+      if(db.settings.cashStatus!=='abierta') return alert('La caja está cerrada.');
+      const cart = getCurrentCart();
+      if(!cart.items.length) return alert('No hay productos en el carrito.');
+      saveCurrentCartMeta();
+      const totals = getCartTotals();
+      $('#modalTotal').value = money(totals.total);
+      $('#amountReceived').value = Math.round(totals.total);
+      $('#amountChange').value = money(0);
+      openModal('paymentModal');
+      calcChange();
+    }
+
+    function confirmPayment(){
+      const cart = getCurrentCart();
+      let order = null;
+      if(cart.linkedOrderId){
+        order = db.orders.find(o=>o.id===cart.linkedOrderId);
+        if(order){
+          order.items = cart.items.map(i=>({productId:i.productId,name:i.name,price:i.price,qty:i.qty}));
+          order.customer = $('#cartCustomer').value.trim();
+          order.notes = $('#cartNotes').value.trim();
+          order.orderType = $('#orderType').value;
+          order.tableId = $('#cartTable').value;
+          order.tableName = order.tableId ? (db.tables.find(t=>t.id===order.tableId)?.name || '') : '';
+          Object.assign(order, getCartTotals());
+          order.status = 'Pagado';
+          order.statusHistory.push({status:'Pagado', by:currentUser.name, at:new Date().toISOString()});
+        }
+      }
+      if(!order) order = createOrder('Pagado');
+      if(!order) return;
+      const sale = makeSaleFromOrder(order, $('#paymentMethod').value);
+      order.saleId = sale.id;
+      closeModal('paymentModal');
+      buildReceipt(sale);
+      saveData();
+      window.print();
+      clearCart();
+      render();
+    }
+
+    function buildReceipt(sale){
+      const logo = db.settings.logo ? `<div class="r-center"><img src="${db.settings.logo}" alt="logo" style="max-width:80px;max-height:80px;margin-bottom:8px"></div>` : '';
+      $('#receiptPrint').innerHTML = `
+        ${logo}
+        <div class="r-center">
+          <h2 style="margin:0 0 6px">${db.settings.businessName}</h2>
+          <div>${db.settings.address || ''}</div>
+          <div>${db.settings.phone || ''}</div>
+          <div style="margin-top:6px">Boleta #${sale.number}</div>
+          <div>${sale.dateTime.replace('T',' ').slice(0,19)}</div>
+        </div>
+        <hr>
+        <div><b>Tipo:</b> ${sale.orderType}</div>
+        <div><b>Mesa / Cliente:</b> ${sale.tableName || sale.customer || '-'}</div>
+        <div><b>Mesero:</b> ${sale.waiterName || '-'}</div>
+        <div><b>Pago:</b> ${sale.paymentMethod}</div>
+        <div><b>Notas:</b> ${sale.notes || '-'}</div>
+        <hr>
+        <table>
+          <thead><tr><th>Prod.</th><th>Cant.</th><th>P.U.</th><th>Total</th></tr></thead>
+          <tbody>${sale.items.map(i=>`<tr><td>${i.name}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty*i.price)}</td></tr>`).join('')}</tbody>
+        </table>
+        <hr>
+        <div style="display:flex;justify-content:space-between"><span>Subtotal</span><b>${money(sale.subtotal)}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>Impuesto</span><b>${money(sale.tax)}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>Servicio</span><b>${money(sale.service)}</b></div>
+        <div style="display:flex;justify-content:space-between;font-size:18px;margin-top:8px"><span>Total</span><b>${money(sale.total)}</b></div>
+        <p class="r-center" style="margin-top:16px">Gracias por su compra</p>
+      `;
+    }
+
+    function reprintSale(saleId){
+      const sale = db.sales.find(s=>s.id===saleId);
+      if(!sale) return alert('Venta no encontrada.');
+      buildReceipt(sale);
+      window.print();
+    }
+    window.reprintSale = reprintSale;
+
+    function setCategoryFilter(c){ categoryFilter = c; renderProductsGrid(); }
+    window.setCategoryFilter = setCategoryFilter;
+
+    function openModal(id){ $('#'+id).classList.add('open'); }
+    function closeModal(id){ $('#'+id).classList.remove('open'); }
+
+    function calcChange(){
+      const total = getCartTotals().total;
+      const rec = Number($('#amountReceived').value || 0);
+      $('#amountChange').value = money(Math.max(0, rec-total));
+    }
+
+    function openNewProduct(){
+      $('#productModalTitle').textContent='Nuevo producto';
+      $('#prodId').value=''; $('#prodName').value=''; $('#prodPrice').value=''; $('#prodDesc').value=''; $('#prodActive').value='true';
+      $('#prodCategory').innerHTML = db.categories.map(c=>`<option>${c}</option>`).join('');
+      $('#prodCategory').value = db.categories[0] || '';
+      openModal('productModal');
+    }
+
+    function editProduct(id){
+      const p = db.products.find(x=>x.id===id); if(!p) return;
+      $('#productModalTitle').textContent='Editar producto';
+      $('#prodCategory').innerHTML = db.categories.map(c=>`<option>${c}</option>`).join('');
+      $('#prodId').value=p.id; $('#prodName').value=p.name; $('#prodPrice').value=p.price; $('#prodDesc').value=p.desc||''; $('#prodCategory').value=p.category; $('#prodActive').value=String(p.active);
+      openModal('productModal');
+    }
+    window.editProduct = editProduct;
+
+    function saveProduct(){
+      const id = $('#prodId').value;
+      const data = {id:id||uid('p'), name:$('#prodName').value.trim(), category:$('#prodCategory').value, price:Number($('#prodPrice').value||0), desc:$('#prodDesc').value.trim(), active:$('#prodActive').value==='true'};
+      if(!data.name) return alert('Ingresa un nombre.');
+      if(data.price<0) return alert('Precio inválido.');
+      if(id){ const idx=db.products.findIndex(p=>p.id===id); if(idx>=0) db.products[idx]=data; }
+      else db.products.push(data);
+      saveData(); closeModal('productModal'); render();
+    }
+
+    function deleteProduct(id){ if(!confirm('¿Eliminar producto?')) return; db.products = db.products.filter(p=>p.id!==id); saveData(); render(); }
+    window.deleteProduct = deleteProduct;
+
+    function addCategory(){
+      const c = $('#newCategoryName').value.trim();
+      if(!c) return;
+      if(db.categories.includes(c)) return alert('La categoría ya existe.');
+      db.categories.push(c); $('#newCategoryName').value=''; saveData(); render();
+    }
+
+    function deleteCategory(name){
+      if(db.products.some(p=>p.category===name)) return alert('No puedes eliminar esta categoría porque tiene productos asociados.');
+      db.categories = db.categories.filter(c=>c!==name); saveData(); render();
+    }
+    window.deleteCategory = deleteCategory;
+
+    function saveSettings(){
+      if(!hasPerm('settings')) return;
+      db.settings.businessName = $('#bizName').value.trim() || 'Restaurante PRO';
+      db.settings.currency = $('#bizCurrency').value.trim() || '$';
+      db.settings.phone = $('#bizPhone').value.trim();
+      db.settings.address = $('#bizAddress').value.trim();
+      db.settings.taxPercent = Number($('#bizTax').value || 0);
+      db.settings.servicePercent = Number($('#bizService').value || 0);
+      db.settings.cashStatus = $('#cashStatus').value;
+      saveData(); render(); alert('Configuración guardada.');
+    }
+
+    function applyTables(){
+      if(!hasPerm('settings')) return;
+      const n = Math.max(1, Number($('#tableCount').value || 1));
+      db.tables = Array.from({length:n},(_,i)=>({id:String(i+1),name:`Mesa ${i+1}`}));
+      saveData(); render(); alert('Mesas actualizadas.');
+    }
+
+    function exportData(){
+      const blob = new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='restaurant_pos_roles_backup.json'; a.click(); URL.revokeObjectURL(a.href);
+    }
+
+    function importData(file){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        try{
+          db = migrateData(JSON.parse(e.target.result));
+          saveData();
+          tryRestoreSession() || logout();
+          render();
+          alert('Datos importados correctamente.');
+        }catch(err){ alert('Archivo inválido.'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function setDemo(){
+      if(!confirm('Esto reemplazará todos los datos actuales por datos demo.')) return;
+      db = defaultData(); saveData(); logout(); render();
+    }
+
+    function handleLogo(file){
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = e=>{ db.settings.logo = e.target.result; saveData(); render(); };
+      reader.readAsDataURL(file);
+    }
+
+    function openNewUser(){
+      if(!hasPerm('users')) return;
+      $('#userModalTitle').textContent='Nuevo usuario';
+      $('#userId').value=''; $('#userName').value=''; $('#userUsername').value=''; $('#userPassword').value=''; $('#userRole').value='Mesero'; $('#userActive').value='true';
+      paintPermissions(rolePermissions('Mesero'));
+      openModal('userModal');
+    }
+
+    function paintPermissions(perms){
+      $('#permissionsGrid').innerHTML = Object.entries(PERMISSION_LABELS).map(([key,label])=>`
+        <label class="perm-item"><input type="checkbox" data-perm="${key}" ${perms[key]?'checked':''}><span>${label}</span></label>
+      `).join('');
+    }
+
+    function collectPermissions(){
+      const perms = {};
+      $$('#permissionsGrid [data-perm]').forEach(el=>perms[el.dataset.perm]=el.checked);
+      return perms;
+    }
+
+    function editUser(id){
+      if(!hasPerm('users')) return;
+      const u = db.users.find(x=>x.id===id); if(!u) return;
+      $('#userModalTitle').textContent='Editar usuario';
+      $('#userId').value=u.id; $('#userName').value=u.name; $('#userUsername').value=u.username; $('#userPassword').value=u.password; $('#userRole').value=u.role; $('#userActive').value=String(u.active);
+      paintPermissions({...rolePermissions(u.role), ...(u.permissions||{})});
+      openModal('userModal');
+    }
+    window.editUser = editUser;
+
+    function saveUser(){
+      if(!hasPerm('users')) return;
+      const id = $('#userId').value;
+      const data = {
+        id: id || uid('u'), name:$('#userName').value.trim(), username:$('#userUsername').value.trim(), password:$('#userPassword').value,
+        role:$('#userRole').value, active:$('#userActive').value==='true', permissions:collectPermissions()
+      };
+      if(!data.name || !data.username || !data.password) return alert('Completa nombre, usuario y contraseña.');
+      const duplicate = db.users.find(u=>u.username.toLowerCase()===data.username.toLowerCase() && u.id!==id);
+      if(duplicate) return alert('Ese usuario ya existe.');
+      if(id){
+        const idx = db.users.findIndex(u=>u.id===id); if(idx>=0) db.users[idx]=data;
+        if(currentUser && currentUser.id===id) currentUser = data;
+      } else {
+        db.users.push(data); db.carts[data.id] = defaultCart();
+      }
+      saveData(); closeModal('userModal'); render();
+    }
+
+    function deleteUser(id){
+      if(!hasPerm('users')) return;
+      if(!confirm('¿Eliminar usuario?')) return;
+      db.users = db.users.filter(u=>u.id!==id);
+      delete db.carts[id];
+      saveData(); render();
+    }
+    window.deleteUser = deleteUser;
+
+    function printReport(){
+      const from = $('#reportFrom').value || '0000-01-01';
+      const to = $('#reportTo').value || '9999-12-31';
+      const filtered = db.sales.filter(s=>{const d=onlyDate(s.dateTime); return d>=from && d<=to;}).sort((a,b)=>a.dateTime < b.dateTime ? 1 : -1);
+      const revenue = filtered.reduce((a,b)=>a+b.total,0);
+      const prodMap = {};
+      filtered.forEach(s=>s.items.forEach(it=>prodMap[it.name]=(prodMap[it.name]||0)+it.qty));
+      $('#receiptPrint').innerHTML = `
+        <div class="r-center"><h2 style="margin:0 0 6px">Reporte de ventas</h2><div>${db.settings.businessName}</div><div>Desde ${from} hasta ${to}</div></div>
+        <hr>
+        <div style="display:flex;justify-content:space-between"><span>Total de ventas</span><b>${filtered.length}</b></div>
+        <div style="display:flex;justify-content:space-between"><span>Facturación</span><b>${money(revenue)}</b></div>
+        <hr>
+        <table><thead><tr><th>Fecha</th><th>Tipo</th><th>Pago</th><th>Total</th></tr></thead><tbody>${filtered.map(s=>`<tr><td>${formatWhen(s.dateTime)}</td><td>${s.orderType}</td><td>${s.paymentMethod}</td><td>${money(s.total)}</td></tr>`).join('') || '<tr><td colspan="4">Sin ventas</td></tr>'}</tbody></table>
+        <hr>
+        <table><thead><tr><th>Producto</th><th>Cantidad</th></tr></thead><tbody>${Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).map(([name,qty])=>`<tr><td>${name}</td><td>${qty}</td></tr>`).join('') || '<tr><td colspan="2">Sin datos</td></tr>'}</tbody></table>
+      `;
+      window.print();
+    }
+
+    function setDefaultReportDates(){
+      const today = new Date().toISOString().slice(0,10);
+      $('#reportFrom').value = today; $('#reportTo').value = today;
+    }
+
+    function render(){
+      setBrand();
+      renderNavigation();
+      renderUserHeader();
+      renderDashboard();
+      renderPOS();
+      renderOrders();
+      renderTables();
+      renderProductsTable();
+      renderReports();
+      renderSettings();
+      renderNotifications();
+      saveData();
+    }
+
+    document.addEventListener('click', e=>{
+      const closer = e.target.closest('[data-close]');
+      if(closer) closeModal(closer.dataset.close);
+      if(e.target.classList.contains('modal') || e.target.classList.contains('drawer')) e.target.classList.remove('open');
+    });
+
+    $('#btnLogin').addEventListener('click', ()=>{
+      const ok = login($('#loginUsername').value, $('#loginPassword').value);
+      if(!ok){ $('#loginError').textContent='Usuario o contraseña incorrectos.'; $('#loginError').style.display='block'; }
+    });
+    $('#loginPassword').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#btnLogin').click(); });
+    $('#loginUsername').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#btnLogin').click(); });
+
+    $('#navTabs').addEventListener('click', e=>{ const btn = e.target.closest('button[data-tab]'); if(btn) switchTab(btn.dataset.tab); });
+    $('#mobileNav').addEventListener('click', e=>{ const btn = e.target.closest('button[data-tab]'); if(btn) switchTab(btn.dataset.tab); });
+    $('#btnLogout').addEventListener('click', logout);
+    $('#btnSidebarLogout').addEventListener('click', logout);
+    $('#searchProduct').addEventListener('input', renderProductsGrid);
+    $('#orderType').addEventListener('change', e=>{ const cart=getCurrentCart(); cart.orderType=e.target.value; if(e.target.value!=='Mesa') cart.tableId=''; saveData(); renderCart(); renderTables(); });
+    $('#cartTable').addEventListener('change', e=>{ const cart=getCurrentCart(); cart.tableId=e.target.value; saveData(); renderTables(); });
+    $('#cartCustomer').addEventListener('input', e=>{ const cart=getCurrentCart(); cart.customer=e.target.value; saveData(); });
+    $('#cartNotes').addEventListener('input', e=>{ const cart=getCurrentCart(); cart.notes=e.target.value; saveData(); });
+    $('#btnClearCart').addEventListener('click', ()=>{ if(confirm('¿Limpiar carrito actual?')) clearCart(); });
+    $('#btnSendKitchen').addEventListener('click', sendKitchen);
+    $('#btnPay').addEventListener('click', payCurrentCart);
+    $('#btnConfirmPayment').addEventListener('click', confirmPayment);
+    $('#amountReceived').addEventListener('input', calcChange);
+    $('#filterOrderStatus').addEventListener('change', renderOrders);
+    $('#filterOrderScope').addEventListener('change', renderOrders);
+    $('#btnNewProduct').addEventListener('click', openNewProduct);
+    $('#btnSaveProduct').addEventListener('click', saveProduct);
+    $('#btnAddCategory').addEventListener('click', addCategory);
+    $('#btnRunReport').addEventListener('click', renderReports);
+    $('#btnPrintReport').addEventListener('click', printReport);
+    $('#btnSaveSettings').addEventListener('click', saveSettings);
+    $('#btnApplyTables').addEventListener('click', applyTables);
+    $('#btnExportData').addEventListener('click', exportData);
+    $('#importData').addEventListener('change', e=>e.target.files[0] && importData(e.target.files[0]));
+    $('#bizLogo').addEventListener('change', e=>handleLogo(e.target.files[0]));
+    $('#btnSeed').addEventListener('click', setDemo);
+    $('#btnNewUser').addEventListener('click', openNewUser);
+    $('#btnSaveUser').addEventListener('click', saveUser);
+    $('#userRole').addEventListener('change', e=>paintPermissions(rolePermissions(e.target.value)));
+    $('#btnOpenNotifications').addEventListener('click', ()=>{ openModal('notificationDrawer'); renderNotifications(); });
+    $('#btnMarkAllNotifications').addEventListener('click', markAllNotificationsRead);
+
+    setDefaultReportDates();
+    tryRestoreSession();
+    if(!currentUser){
+      $('#loginScreen').classList.add('open');
+      setBrand();
+    }
+  </script>
+</body>
+</html>
